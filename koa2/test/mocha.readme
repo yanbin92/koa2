@@ -1,0 +1,86 @@
+/**
+    mocha
+    阅读: 416
+    如果你听说过“测试驱动开发”（TDD：Test-Driven Development），单元测试就不陌生。
+
+    单元测试是用来对一个模块、一个函数或者一个类来进行正确性检验的测试工作。
+
+    比如对函数abs()，我们可以编写出以下几个测试用例：
+
+    输入正数，比如1、1.2、0.99，期待返回值与输入相同；
+
+    输入负数，比如-1、-1.2、-0.99，期待返回值与输入相反；
+
+    输入0，期待返回0；  
+    如果单元测试通过，说明我们测试的这个函数能够正常工作。如果单元测试不通过，要么函数有bug，要么测试条件输入不正确，总之，需要修复使单元测试能够通过。
+
+    单元测试通过后有什么意义呢？
+    如果我们对abs()函数代码做了修改，只需要再跑一遍单元测试，
+    如果通过，说明我们的修改不会对abs()函数原有的行为造成影响，
+    如果测试不通过，说明我们的修改与原有行为不一致，要么修改代码，要么修改测试。
+
+    这种以测试为驱动的开发模式最大的好处就是确保一个程序模块的行为符合我们设计的测试用例。
+    在将来修改的时候，可以极大程度地保证该模块行为仍然是正确的。
+
+    mocha
+    mocha是JavaScript的一种单元测试框架，既可以在浏览器环境下运行，也可以在Node.js环境下运行。
+    使用mocha，我们就只需要专注于编写单元测试本身，然后，让mocha去自动运行所有的测试，并给出测试结果。
+    mocha的特点主要有：
+    既可以测试简单的JavaScript函数，又可以测试异步代码，因为异步是JavaScript的特性之一；
+    可以自动运行所有测试，也可以只运行特定的测试；
+    可以支持before、after、beforeEach和afterEach来编写初始化代码。
+    我们会详细讲解如何使用mocha编写自动化测试，以及如何测试异步代码。
+    mocha默认会执行test目录下的所有测试，不要去改变默认目录。
+
+   如果一个模块在运行的时候并不需要，仅仅在开发时才需要，就可以放到devDependencies中。
+    这样，正式打包发布时，devDependencies的包不会被包含进来。
+    注意，很多文章会让你用命令npm install -g mocha把mocha安装到全局module中。这是不需要的。尽量不要安装全局模块，因为全局模块会影响到所有Node.js的工程。
+  
+   方法三，我们在VS Code中创建配置文件.vscode/launch.json，然后编写两个配置选项：
+
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Run",
+            "type": "node",
+            "request": "launch",
+            "program": "${workspaceRoot}/hello.js",
+            "stopOnEntry": false,
+            "args": [],
+            "cwd": "${workspaceRoot}",
+            "preLaunchTask": null,
+            "runtimeExecutable": null,
+            "runtimeArgs": [
+                "--nolazy"
+            ],
+            "env": {
+                "NODE_ENV": "development"
+            },
+            "externalConsole": false,
+            "sourceMaps": false,
+            "outDir": null
+        },
+        {
+            "name": "Test",
+            "type": "node",
+            "request": "launch",
+            "program": "${workspaceRoot}/node_modules/mocha/bin/mocha",
+            "stopOnEntry": false,
+            "args": [],
+            "cwd": "${workspaceRoot}",
+            "preLaunchTask": null,
+            "runtimeExecutable": null,
+            "runtimeArgs": [
+                "--nolazy"
+            ],
+            "env": {
+                "NODE_ENV": "test"
+            },
+            "externalConsole": false,
+            "sourceMaps": false,
+            "outDir": null
+        }
+    ]
+}
+*/

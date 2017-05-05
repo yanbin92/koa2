@@ -1,0 +1,128 @@
+{% extends "websocket-base.html" %} {% block main %}
+<script>//为了简化状态管理，我们用Vue控制左右两个列表：
+//Vue.js 的核心是一个允许采用简洁的模板语法来声明式的将数据渲染进 DOM：
+var vmMessageList=new Vue({
+    el:"#message-list",
+    data:{
+        messages:[]
+    }
+})
+var vmUserList = new Vue({
+    el: '#user-list',
+    data: {
+        users: [
+            
+        ]
+    }
+});
+//紧接着，创建WebSocket连接，响应服务器消息，并且更新会话列表和用户列表：
+var ws = new WebSocket('ws://localhost:3000/ws/chat');
+/**
+    msg{
+        id: messageIndex,
+        type: type,
+        user: user,
+        data: data
+    }
+*/
+      
+ws.onmessage = function(event) {
+    var data = event.data;
+    console.log(data);
+    var msg = JSON.parse(data);
+    if (msg.type === 'list') {
+        vmUserList.users = msg.data;
+    } else if (msg.type === 'join') {
+        addToUserList(vmUserList.users, msg.user);
+        addMessage(vmMessageList.messages, msg);
+    } else if (msg.type === 'left') {
+        removeFromUserList(vmUserList.users, msg.user);
+        addMessage(vmMessageList.messages, msg);
+    } else if (msg.type === 'chat') {
+        addMessage(vmMessageList.messages, msg);
+    }
+};
+
+function addToUserList(users,user){
+  
+
+}
+
+function addMessage(){
+
+}
+
+function removeFromUserList(){
+
+}
+//这样，JavaScript负责更新状态，Vue负责根据状态刷新DOM。
+//以用户列表为例，HTML代码如下：
+</script>
+<div class="container">
+     <div class="row">
+        <div class="col-md-8">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><span class="glyphicon glyphicon-th-list"></span> Room</h3>
+                </div>
+                <div class="panel-body">
+                    <div style="height:400px; overflow-x:hidden; overflow-y:scroll;">
+                        <div id="message-list">
+                            <div style="margin-bottom:25px;" v-for="msg in messages">
+                                <div v-if="msg.type === 'join' || msg.type === 'left'">
+                                    <div class="media-left">
+                                        <img class="media-object" style="width:20px; height:20px;" v-bind:src="'/static/images/' + msg.user.image + '.png'">
+                                    </div>
+                                    <div class="media-body">
+                                        <h4 class="media-heading" v-text="msg.data"></h4>
+                                    </div>
+                                </div>
+                                <div v-if="msg.type === 'chat'">
+                                    <div class="media">
+                                        <div class="media-left">
+                                            <img class="media-object" style="width:48px; height:48px;" v-bind:src="'/static/images/' + msg.user.image + '.png'">
+                                        </div>
+                                        <div class="media-body">
+                                            <h4 class="media-heading" v-text="msg.user.name"></h4>
+                                            <span v-text="msg.data"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <form id="form-chat" action="#0">
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="A good day, isn't it?">
+                                <span class="input-group-btn"><button class="btn btn-default" type="submit">Go</button></span>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><span class="glyphicon glyphicon-user"></span> Users</h3>
+                </div>
+                <div class="panel-body">
+                    <div style="height:434px; overflow-x:hidden; overflow-y:scroll;">
+                        <div id="user-list">
+                            <div class="media" v-for="user in users">
+                                <div class="media-left">
+                                    <img class="media-object" style="width:20px; height:20px;" v-bind:src="'/static/images/' + user.image + '.png'">
+                                </div>
+                                <div class="media-body">
+                                    <h4 class="media-heading" v-text="user.name + ' (' + user.id + ')'"></h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

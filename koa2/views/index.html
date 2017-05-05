@@ -1,0 +1,30 @@
+<h1> hello {{name}}</h1>
+{% extends 'base.html' %}
+{% block container %} 
+<h1>{{title}}</h1>
+<form id="test-form" action="/signin" method="post" onsubmit="return checkForm()">
+    <p>Name: <input name="name" value="koa"></p>
+    <p>Password: <input id="psw"  type="password"></p>
+    <input id="md5-password" name="password" type="hidden">
+
+    <p><input type="submit" value="Submit"></p>
+
+</form>
+<script src="/assets/crypto-js.js"></script>
+<script src="/assets/md5.js"></script>
+
+<script>
+function checkForm(){
+var ipt_password = document.getElementById('psw');
+var md5_password = document.getElementById('md5-password');
+// 可以在此修改form的input...
+// 继续下一步:
+//这个做法看上去没啥问题，但用户输入了口令提交时，
+//口令框的显示会突然从几个*变成32个*（因为MD5有32个字符）。
+
+md5_password.value=CryptoJS.MD5(ipt_password.value);
+console.log(md5_password.value);
+return true;
+}
+</script>
+{% endblock %}

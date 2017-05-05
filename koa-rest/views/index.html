@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block container %} 
+<script>
+$(function () {
+    var vm = new Vue({
+        el: '#product-list',
+        data: {
+            products: []
+        },
+         methods: {
+            deleteProduct: function (id) {
+                var that = this;
+                // AJAX提交JSON:
+                $.ajax({
+                    type: 'delete',
+                    dataType: 'json',
+                    url: '/api/products/' + id
+                }).done(function (r) {
+                    console.log(r);
+                    var i;
+                    for (i=0; i<that.products.length; i++) {
+                        if (that.products[i].id === r.id) {
+                            that.products.splice(i, 1);
+                            return;
+                        }
+                    }
+                }).fail(function (jqXHR, textStatus) {
+                    // Not 200:
+                    alert('Error: ' + jqXHR.status);
+                });
+            }
+        }
+    });
+
+    $.getJSON('/api/products').done(function (data) {
+        vm.products = data.products;
+    }).fail(function (jqXHR, textStatus) {
+        alert('Error: ' + jqXHR.status);
+    });
+});
+</script>
+
+<table id="product-list" class="table table-hover">
+    <thead>
+        <tr>
+            <th style="width:50px"></th>
+            <th>Product</th>
+            <th style="width:150px">Price</th>
+            <th style="width:150px">操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr v-for="p in products">
+            <td>
+                <img class="media-object" style="width:40px; height:40px;" src="/static/images/icon.png">
+            </td>
+            <td>
+                <h4 class="media-heading" v-text="p.name"></h4>
+                <p><span v-text="p.manufacturer"></span></p>
+            </td>
+            <td>
+                <p style="font-size:2em">¥ <span v-text="p.price"></span></p>
+            </td>
+             <td>
+                <p style="font-size:2em"><a  v-on:click="deleteProduct(p.id)" href="#0">delete</a></p>
+            </td>
+        </tr>
+    </tbody>
+</table>
+{% endblock %}
