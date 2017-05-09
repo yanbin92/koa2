@@ -23,6 +23,21 @@ module.exports = {
             throw new APIError('product:not_found', 'product not found by id.');
         }
     }
+    ,
+
+       'PUT /api/products/:id': async (ctx, next) => {
+        console.log(`update product ${ctx.params.id}...`);
+        try{
+        var p = products.updateProduct(ctx.params.id,ctx.request.body);
+        if (p) {
+            ctx.rest(p);
+        } else {
+            throw new APIError('product:not_found', 'product not found by id.');
+        }
+        }catch(e){
+            console.error(e)
+        }
+    }
     //该API支持GET、POST和DELETE这三个请求。当然，还可以添加更多的API。
     /**
      编写API时，需要注意：

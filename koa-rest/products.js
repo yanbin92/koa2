@@ -54,5 +54,26 @@ module.exports = {
             return products.splice(index, 1)[0];
         }
         return null;
+    },
+
+        updateProduct: (id,product) => {
+        console.log('will update'+JSON.stringify(product))
+        var index=-1,
+            i;
+        for (i = 0; i < products.length; i++) {
+            if (products[i].id === id) {
+                index = i;
+                console.log('find product index:'+index)
+                break;
+            }
+        }
+        if (index >= 0) {
+            // update products[index]:
+
+            products[index]=product
+          
+            return products[index];
+        }
+        return null;
     }
 };

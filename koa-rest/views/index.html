@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 {% block container %} 
+<script src="https://cdn.jsdelivr.net/vue.resource/1.0.3/vue-resource.min.js"></script>
+
 <script>
 $(function () {
     var vm = new Vue({
@@ -7,6 +9,11 @@ $(function () {
         data: {
             products: []
         },
+        //created指定了当VM初始化成功后的回调函数，这样，init()方法会被自动调用
+        //类似的，对于添加、修改、删除的操作，我们也需要往VM中添加对应的函数。以添加为例：
+         created: function () {
+             this.init();
+         },
          methods: {
             deleteProduct: function (id) {
                 var that = this;
@@ -28,17 +35,86 @@ $(function () {
                     // Not 200:
                     alert('Error: ' + jqXHR.status);
                 });
+            },
+            init:function(){
+                var that=this;
+                that.$resource('/api/products').get()
+                .then(function (resp) {
+                    // 调用API成功时调用json()异步返回结果:
+                    resp.json().then(function (result) {
+                        // 更新VM的products:
+                        vm.products = result.products;
+                    });
+                }, function (resp) {
+                    // 调用API失败:
+                    alert('error');
+                });
+             },
+            create: function (product) {
+                var that = this;
+                that.$resource('/api/products').save(product)
+                .then(function (resp) {
+                    resp.json().then(function (result) {
+                        that.products.push(result);
+                    });
+                }).catch(function(e){
+                    console.error(e);   
+                });
+            },
+            update: function (product, prop, e) {
+                var that=this;
+                var t = {
+                    name: product.name,
+                    manufacturer: product.manufacturer,
+                    price:product.price 
+                };
+                t[prop] = e.target.innerText;
+                if (t[prop] === product[prop]) {
+                    return;
+                }
+                that.$resource('/api/products/'+ product.id).update(t)
+                .then(function (resp) {
+                    resp.json().then(function (r) {
+                        console.log(r)
+                       product.name = r.name;
+                       product.manufacturer=r.manufacturer;
+                       product.price =r.price
+                    });
+                }, function (resp) {
+                    e.target.innerText = product[prop];
+                     console.error("error TODO");
+                });
+         }
+        }
+     
+    });
+
+    var vmAdd = new Vue({
+        el: '#vmAdd',
+        data: {
+            name: '',
+            manufacturer: '',
+            price:''
+        },
+        methods: {
+            submit: function () {
+                vm.create(this.$data);
             }
         }
     });
-
-    $.getJSON('/api/products').done(function (data) {
-        vm.products = data.products;
-    }).fail(function (jqXHR, textStatus) {
-        alert('Error: ' + jqXHR.status);
-    });
+    // $.getJSON('/api/products').done(function (data) {
+    // }).fail(function (jqXHR, textStatus) {
+    //     alert('Error: ' + jqXHR.status);
+    // });
 });
 </script>
+
+<form id="vmAdd" action="#0" v-on:submit.prevent="submit">
+    <p>name<input type="text" v-model="name"></p>
+    <p>manufacturer<input type="text" v-model="manufacturer"></p>
+     <p>price<input type="text" v-model="price"></p>
+    <p><button type="submit">Add</button></p>
+</form>
 
 <table id="product-list" class="table table-hover">
     <thead>
@@ -55,11 +131,11 @@ $(function () {
                 <img class="media-object" style="width:40px; height:40px;" src="/static/images/icon.png">
             </td>
             <td>
-                <h4 class="media-heading" v-text="p.name"></h4>
-                <p><span v-text="p.manufacturer"></span></p>
+                <h4 contenteditable="true" v-on:blur="update(p, 'name', $event)" class="media-heading" v-text="p.name"></h4>
+                <p><span contenteditable="true" v-on:blur="update(p, 'manufacturer', $event)" v-text="p.manufacturer"></span></p>
             </td>
             <td>
-                <p style="font-size:2em">¥ <span v-text="p.price"></span></p>
+                <p style="font-size:2em">¥ <span contenteditable="true" v-on:blur="update(p, 'price', $event)" v-text="p.price"></span></p>
             </td>
              <td>
                 <p style="font-size:2em"><a  v-on:click="deleteProduct(p.id)" href="#0">delete</a></p>
