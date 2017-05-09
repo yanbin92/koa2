@@ -56,7 +56,7 @@ module.exports = {
         return null;
     },
 
-        updateProduct: (id,product) => {
+    updateProduct: (id,product) => {
         console.log('will update'+JSON.stringify(product))
         var index=-1,
             i;
