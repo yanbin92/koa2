@@ -28,12 +28,12 @@ module.exports = {
        'PUT /api/products/:id': async (ctx, next) => {
         console.log(`update product ${ctx.params.id}...`);
         try{
-        var p = products.updateProduct(ctx.params.id,ctx.request.body);
-        if (p) {
-            ctx.rest(p);
-        } else {
-            throw new APIError('product:not_found', 'product not found by id.');
-        }
+            var p = products.updateProduct(ctx.params.id,ctx.request.body);
+            if (p) {
+                ctx.rest(p);
+            } else {
+                throw new APIError('product:not_found', 'product not found by id.');
+            }
         }catch(e){
             console.error(e)
         }
