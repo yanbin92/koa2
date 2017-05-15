@@ -79,10 +79,10 @@ public class Kruskal {
 		 */
 		//建立N棵树 
 		Set<Set<Integer>> trees=new HashSet<Set<Integer>>();
+
 		//make-set
-		
 		for(int i=1;i<=N;i++){
-			Set<Integer> V=new HashSet<Integer>();//保存已经选择的点 
+			Set<Integer> V=new MyHashSet<Integer>(i);
 			V.add(i);
 			trees.add(V);
 		}
@@ -129,8 +129,12 @@ public class Kruskal {
 	}
 
 	private static void union(Set<Integer> tree_s, Set<Integer> tree_e,Set<Set<Integer>> trees) {
-		tree_s.addAll(tree_e);
+		//重点注意 hashSet存储对象的remove问题
 		trees.remove(tree_e);
+		tree_s.addAll(tree_e);
+		//
+		System.out.println(trees.toString());
+
 	}
 
 	private static Set<Integer> findSet(int s, Set<Set<Integer>> trees) {
@@ -140,12 +144,33 @@ public class Kruskal {
 		}
 		return null;
 	}
+}
+class MyHashSet<E> extends HashSet<E>{
+	public int id;
 	
-//		int sum=0;
-//		for(TreeItem item :selectItems){
-//			sum+=item.W;
-//		}
-//	}	
+	MyHashSet(int id){
+		this.id=id;
+	}
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	public int hashCode() {
+		return id;
+		}
+
+	public boolean equals(Object obj) {
+		if (this==obj) {
+		return true;
+		}
+		if (obj.getClass()==MyHashSet.class) {
+			MyHashSet obj2 = (MyHashSet) obj;
+			return obj2.id==this.id;
+		}
+		return false;
+	}
+		
+	
 }
 class TreeItem{
 	int S;
