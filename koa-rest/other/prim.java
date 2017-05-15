@@ -1,12 +1,12 @@
+
+
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.TreeSet;
-/**
 
- */
 public class PrimDemo {
 	/**
 		Prim算法过程：
@@ -52,6 +52,9 @@ public class PrimDemo {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+
+	
+
 		Scanner in = new Scanner(System.in);
 		int N = in.nextInt();//N为点的数量
 		int M = in.nextInt();//M为边的数量
@@ -64,7 +67,7 @@ public class PrimDemo {
 			}
 			
 		});
-
+		//此处内存开辟了  M 
 		for(int i=0;i<M;i++){
 			TreeItem item=new TreeItem();
 			item.S=in.nextInt();
@@ -91,10 +94,10 @@ public class PrimDemo {
 		Set<Integer> V=new HashSet<Integer>();	
 		V.add(1);//
 		Set<TreeItem> selectItems=new HashSet<TreeItem>();	
-	
+		int sum=0;
 	
 		for(int i=1;i<N;i++){
-			int min_W =0;
+			//int min_W =0;  因为排过序了 所以只要满足条件的v1属于V , v2不属于V。 权值最小
 			TreeItem selectItem=new TreeItem();
 			//v1属于V , v2不属于V
 			// 一条边一条边地加， 维护一棵树。
@@ -106,25 +109,29 @@ public class PrimDemo {
 				//满足：v1属于V , v2不属于V。且（v1,v2）权值最小。
 				if((V.contains(item.S)&&!V.contains(item.E))||(V.contains(item.E)&&!V.contains(item.S))
 						){//v1属于V  v2不属于V
-					if(min_W==0||item.W<min_W){
-						min_W=item.W;
+//					if(min_W==0||item.W<min_W){
+//						min_W=item.W;
 						selectItem=item;
-					}
+						tree.remove(selectItem);
+						break;
+//					}
 				}
 			}
 			//选过的边不用再过滤了
-			//tree.remove(selectItem);
+			
 			//System.out.println(selectItem.toString());
 			V.add(selectItem.E);
 			V.add(selectItem.S);
 			selectItems.add(selectItem);
+			sum+=selectItem.W;
 		}
 	
-		double sum=0;
-		for(TreeItem item :selectItems){
-			sum+=item.W;
-		}
+//		int sum=0;
+//		for(TreeItem item :selectItems){
+//			sum+=item.W;
+//		}
 		System.out.println(sum);
+		
 	}	
 }
 
