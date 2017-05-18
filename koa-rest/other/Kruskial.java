@@ -5,7 +5,9 @@ import java.util.Iterator;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.TreeSet;
-
+/**
+搞定 超时   优化success
+ */
 public class Kruskal {
 	/**
 		Kruskal算法的过程：
