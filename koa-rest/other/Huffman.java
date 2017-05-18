@@ -24,7 +24,7 @@ public class Huffman {
 	 * @param args
 	 */
     public static void main(String[] args) {
-      //java 1.5后有个PriorityQueue 就是最小堆、最大堆的实现
+      //java 1.5后有个 PriorityQueue 就是最小堆、最大堆的实现
     		Heap<Integer> heap = new Heap<Integer>();
     		
     		Scanner in=new Scanner(System.in);
