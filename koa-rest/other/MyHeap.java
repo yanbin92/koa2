@@ -67,12 +67,12 @@ public class MyHeap<AnyType extends Comparable<AnyType>> {
 	
 		
 		for (int k = size / 2; k > 0; k--) {
-			min_heapify(k);
+			minHeapify(k);
 		}
 
 	}
 
-	void min_heapify(int i) {
+	void minHeapify(int i) {
 		int l = left(i);
 		int r = right(i);
 		int min;
@@ -88,7 +88,7 @@ public class MyHeap<AnyType extends Comparable<AnyType>> {
 			// 交换后 下标为 min的节点值是原来的a[i] 于是已该节点为根的子树又可能违反最小堆的性质 所以 递归调用min_heapify
 			exchange(min, i);
 			// TODO 递归影响效率 用循环修改
-			min_heapify(min);
+			minHeapify(min);
 		}
 	}
 
@@ -115,17 +115,38 @@ public class MyHeap<AnyType extends Comparable<AnyType>> {
 	int parent(int i) {
 		return i / 2;
 	}
-
+	/**
+	 * 将元素a[i]的关键字减小到key key<=a[i] 
+	 * 		这可能会违反最小堆的性质 所以要
+	 * @param i
+	 * @param key
+	 */
+	void decreaseKey(int i,AnyType key){
+		if(key.compareTo(heap[i])>0){//key>a[i]
+			throw new RuntimeException();
+		}
+		heap[i]=key;
+		while(i>1 && heap[i].compareTo(heap[parent(i)])<0){
+			exchange(i,parent(i));
+			i=parent(i);
+		}
+	}
+	
 	/**
 	 * 最小堆的元素插入 依据最小堆的定义自底向上，递归调整。 
-	 * 
+	 *  第二种方法 利用decreasekey来做
+	 *  insert(x){
+	 *   heapsize+=1
+	 *   a[heapsize]=+OO  正无穷
+	 *   decreaseKey(heapsize,x)
+	 *   }
 	 */
 	void insert(AnyType x) {
 		if(size==heap.length-1) doubleSize();
 		size++;
 		heap[size]=x;
 		if(size>1)
-			min_heapify(size/2);
+			minHeapify(size/2);
 		
 	}
 	private void doubleSize() {
@@ -155,7 +176,7 @@ public class MyHeap<AnyType extends Comparable<AnyType>> {
 		AnyType min=heap[1];
 		heap[1]=heap[size];
 		size--;
-		min_heapify(1);
+		minHeapify(1);
 		return min;
 	}
 	
@@ -175,7 +196,7 @@ public class MyHeap<AnyType extends Comparable<AnyType>> {
 		for(int i=size;i>1;i--){
 			 exchange(1,i);
 			 size--;;
-			 min_heapify(1);
+			 minHeapify(1);
 		}
 		//将排序好的heap 重新赋值给array
 		for(int k = 0; k < heap.length-1; k++)
