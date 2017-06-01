@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% block container %} 
+
+<script src="https://cdn.jsdelivr.net/vue.resource/1.0.3/vue-resource.min.js"></script>
+
+<script>
+
+var ID = 'S-001';
+var COLUMNS = 10;
+
+function createHeader() {
+    var hdr = [{
+        row: 0,
+        col: 0,
+        text: ''
+    }];
+    for (var i=1; i<=COLUMNS; i++) {
+        hdr.push({
+            row: 0,
+            col: i,
+            text: String.fromCharCode(64 + i)
+        });
+    }
+    return hdr;
+}
+
+function createRow(rIndex) {
+    var row = [{
+        row: rIndex,
+        col: 0,
+        contentEditable: false,
+        text: '' + rIndex,
+        align: 'left'
+    }];
+    for (var i=1; i<=COLUMNS; i++) {
+        row.push({
+            row: rIndex,
+            col: i,
+            contentEditable: true,
+            text: '',
+            align: 'left'
+        });
+    }
+    return row;
+}
+
+function createRows() {
+    var rows = [];
+    for (var i=1; i<=100; i++) {
+        rows.push(createRow(i));
+    }
+    return rows;
+}
+
+$(function () {
+    var vm = new Vue({
+        el: '#sheet',
+        data: {
+            title: 'New Sheet',
+            header: createHeader(),
+            rows: createRows(),
+            selectedRowIndex: 0,
+            selectedColIndex: 0
+        },
+        //created指定了当VM初始化成功后的回调函数，这样，init()方法会被自动调用
+        //类似的，对于添加、修改、删除的操作，我们也需要往VM中添加对应的函数。以添加为例：
+         created: function () {
+             this.init();
+         },
+         methods: {
+            init:function(){
+            //     var that=this;
+            //     that.$resource('/api/execel_data').get()
+            //     .then(function (resp) {
+            //         // 调用API成功时调用json()异步返回结果:
+            //         resp.json().then(function (result) {
+            //             // 更新VM的products:
+            //             vm.data = result.execel_data;
+            //             console.log(JSON.stringify(vm.data))
+            //         });
+            //     }, function (resp) {
+            //         // 调用API失败:
+            //         alert('error');
+            //     });
+            //  }
+         },
+         focus: function(cell){
+             this.selectedRowIndex=cell.row;
+             this.selectedColIndex = cell.col;
+         },
+          change: function (e) {
+            // change事件传入的e是DOM事件
+            var
+                rowIndex = this.selectedRowIndex,
+                colIndex = this.selectedColIndex,
+                text;
+            if (rowIndex > 0 && colIndex > 0) {
+                text = e.target.innerText; // 获取td的innerText
+                this.rows[rowIndex - 1][colIndex].text = text;
+            }
+          }
+         }
+    
+    
+    });
+  function setAlign(align) {
+            var
+                rowIndex = vm.selectedRowIndex,
+                colIndex = vm.selectedColIndex,
+                row, cell;
+            if (rowIndex > 0 && colIndex > 0) {
+                row = vm.rows[rowIndex - 1];
+                cell = row[colIndex];
+                cell.align = align;
+            }
+        }
+    // 给按钮绑定事件:
+    $('#cmd-left').click(function () { setAlign('left'); });
+    $('#cmd-center').click(function () { setAlign('center'); });
+    $('#cmd-right').click(function () { setAlign('right'); });
+});
+</script>
+<button class='btn btn-default' id="cmd-left">左对齐</button>
+<button class='btn btn-default' id="cmd-center">居中对齐</button>
+<button class='btn btn-default' id="cmd-right">右对齐</button>
+<table id="sheet"  class="table table-bordered">
+    <thead>
+        <tr>
+            <th v-for="cell in header" v-text="cell.text"></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr v-for="tr in rows">
+            <td v-for="cell in tr" v-text="cell.text"  
+ 
+             v-on:click="focus(cell)" v-on:blur="change"
+            v-bind:contenteditable="cell.contentEditable"
+                       v-bind:style="{ textAlign: cell.align }"></td>
+        </tr>
+    </tbody>
+
+</table>
+{% endblock %}
+
+
