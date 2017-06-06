@@ -650,8 +650,401 @@ new Vue({
   }
 })
 
-###给组件绑定原生事件
+###给组件绑定原生事件  TODO 组件
 
 有时候，你可能想在某个组件的根元素上监听一个原生事件。可以使用 .native 修饰 v-on 。例如：
 <my-component v-on:click.native="doTheThing"></my-component>
 
+
+#v-for with v-if
+
+当它们处于同一节点， v-for 的优先级比 v-if 更高，这意味着 v-if 将分别重复运行于每个 v-if 循环中。当你想为仅有的 一些 项渲染节点时，这种优先级的机制会十分有用，如下：
+<li v-for="todo in todos" v-if="!todo.isComplete">
+  {{ todo }}
+</li>
+上面的代码只传递了未complete的todos。
+而如果你的目的是有条件地跳过循环的执行，那么将 v-if 置于包装元素 (或 <template>)上。如:
+<ul v-if="shouldRenderTodos">
+  <li v-for="todo in todos">
+    {{ todo }}
+  </li>
+</ul>
+
+建议尽可能使用 v-for 来提供 key ，除非迭代 DOM 内容足够简单，或者你是故意要依赖于默认行为来获得性能提升。
+
+<div v-for="item in items" :key="item.id">
+  <!-- 内容 -->
+</div>
+
+#注意事项
+由于 JavaScript 的限制， Vue 不能检测以下变动的数组：
+当你利用索引直接设置一个项时，例如： vm.items[indexOfItem] = newValue
+当你修改数组的长度时，例如： vm.items.length = newLength
+为了解决第一类问题，以下两种方式都可以实现和 vm.items[indexOfItem] = newValue 相同的效果， 同时也将触发状态更新：
+
+// Vue.set
+Vue.set(example1.items, indexOfItem, newValue)
+// Array.prototype.splice`
+example1.items.splice(indexOfItem, 1, newValue)
+
+为了解决第二类问题，你也同样可以使用 splice：
+example1.items.splice(newLength)
+
+#显示过滤/排序结果
+
+有时，我们想要显示一个数组的过滤或排序副本，而不实际改变或重置原始数据。在这种情况下，可以创建返回过滤或排序数组的计算属性。
+例如：
+<li v-for="n in evenNumbers">{{ n }}</li>
+data: {
+  numbers: [ 1, 2, 3, 4, 5 ]
+},
+computed: {
+  evenNumbers: function () {
+    return this.numbers.filter(function (number) {
+      return number % 2 === 0
+    })
+  }
+ 或者，你也可以在计算属性不适用的情况下 (例如，在嵌套 v-for 循环中) 使用 method 方法：
+<li v-for="n in even(numbers)">{{ n }}</li>
+data: {
+  numbers: [ 1, 2, 3, 4, 5 ]
+},
+methods: {
+  even: function (numbers) {
+    return numbers.filter(function (number) {
+      return number % 2 === 0
+    })
+  }
+}
+
+
+#事件处理器
+
+##监听事件
+
+可以用 v-on 指令监听 DOM 事件来触发一些 JavaScript 代码。
+示例：
+<div id="example-1">
+  <button v-on:click="counter += 1">增加 1</button>
+  <p>这个按钮被点击了 {{ counter }} 次。</p>
+</div>
+var example1 = new Vue({
+  el: '#example-1',
+  data: {
+    counter: 0
+  }
+})
+
+##方法事件处理器
+
+许多事件处理的逻辑都很复杂，所以直接把 JavaScript 代码写在 v-on 指令中是不可行的。因此 v-on 可以接收一个定义的方法来调用。
+示例：
+<div id="example-2">
+  <!-- `greet` 是在下面定义的方法名 -->
+  <button v-on:click="greet">Greet</button>
+</div>
+var example2 = new Vue({
+  el: '#example-2',
+  data: {
+    name: 'Vue.js'
+  },
+  // 在 `methods` 对象中定义方法
+  methods: {
+    greet: function (event) {
+      // `this` 在方法里指当前 Vue 实例
+      alert('Hello ' + this.name + '!')
+      // `event` 是原生 DOM 事件
+      alert(event.target.tagName)
+    }
+  }
+})
+// 也可以用 JavaScript 直接调用方法
+example2.greet() // -> 'Hello Vue.js!'
+
+##内联处理器方法
+
+除了直接绑定到一个方法，也可以用内联 JavaScript 语句：
+<div id="example-3">
+  <button v-on:click="say('hi')">Say hi</button>
+  <button v-on:click="say('what')">Say what</button>
+</div>
+new Vue({
+  el: '#example-3',
+  methods: {
+    say: function (message) {
+      alert(message)
+    }
+  }
+})
+
+有时也需要在内联语句处理器中访问原生 DOM 事件。可以用特殊变量 $event 把它传入方法：
+<button v-on:click="warn('Form cannot be submitted yet.', $event)">Submit</button>
+// ...
+methods: {
+  warn: function (message, event) {
+    // 现在我们可以访问原生事件对象
+    if (event) event.preventDefault()
+    alert(message)
+  }
+}
+
+##事件修饰符
+在事件处理程序中调用 event.preventDefault() 或 event.stopPropagation() 是非常常见的需求。尽管我们可以在 methods 中轻松实现这点，但更好的方式是：methods 只有纯粹的数据逻辑，而不是去处理 DOM 事件细节。
+为了解决这个问题， Vue.js 为 v-on 提供了 事件修饰符。通过由点(.)表示的指令后缀来调用修饰符。
+.stop
+.prevent
+.capture
+.self
+.once
+在事件处理程序中调用 event.preventDefault() 或 event.stopPropagation() 是非常常见的需求。尽管我们可以在 methods 中轻松实现这点，但更好的方式是：methods 只有纯粹的数据逻辑，而不是去处理 DOM 事件细节。
+
+<!-- 阻止单击事件冒泡 -->
+<a v-on:click.stop="doThis"></a>
+<!-- 提交事件不再重载页面 -->
+<form v-on:submit.prevent="onSubmit"></form>
+<!-- 修饰符可以串联  -->
+<a v-on:click.stop.prevent="doThat"></a>
+<!-- 只有修饰符 -->
+<form v-on:submit.prevent></form>
+<!-- 添加事件侦听器时使用事件捕获模式 -->
+<div v-on:click.capture="doThis">...</div>
+<!-- 只当事件在该元素本身（而不是子元素）触发时触发回调 -->
+<div v-on:click.self="doThat">...</div>
+2.1.4 新增
+<!-- 点击事件将只会触发一次 -->
+<a v-on:click.once="doThis"></a>
+
+##按键修饰符
+
+在监听键盘事件时，我们经常需要监测常见的键值。 Vue 允许为 v-on 在监听键盘事件时添加按键修饰符：
+<!-- 只有在 keyCode 是 13 时调用 vm.submit() -->
+<input v-on:keyup.13="submit">
+记住所有的 keyCode 比较困难，所以 Vue 为最常用的按键提供了别名：
+<!-- 同上 -->
+<input v-on:keyup.enter="submit">
+<!-- 缩写语法 -->
+<input @keyup.enter="submit">
+全部的按键别名：
+.enter
+.tab
+.delete (捕获 “删除” 和 “退格” 键)
+.esc
+.space
+.up
+.down
+.left
+.right
+可以通过全局 config.keyCodes 对象自定义按键修饰符别名：
+// 可以使用 v-on:keyup.f1
+Vue.config.keyCodes.f1 = 112
+
+2.1.0 新增
+可以用如下修饰符开启鼠标或键盘事件监听，使在按键按下时发生响应。
+.ctrl
+.alt
+.shift
+.meta
+在Mac系统键盘上，meta对应命令键 (⌘)。
+在Windows系统键盘meta对应windows徽标键(⊞
+
+<!-- Alt + C -->
+<input @keyup.alt.67="clear">
+<!-- Ctrl + Click -->
+<div @click.ctrl="doSomething">Do something</div>
+
+##为什么在 HTML 中监听事件?
+
+你可能注意到这种事件监听的方式违背了关注点分离（separation of concern）传统理念。不必担心，因为所有的 Vue.js 事件处理方法和表达式都严格绑定在当前视图的 ViewModel 上，它不会导致任何维护上的困难。实际上，使用 v-on 有几个好处：
+扫一眼 HTML 模板便能轻松定位在 JavaScript 代码里对应的方法。
+因为你无须在 JavaScript 里手动绑定事件，你的 ViewModel 代码可以是非常纯粹的逻辑，和 DOM 完全解耦，更易于测试。
+当一个 ViewModel 被销毁时，所有的事件处理器都会自动被删除。你无须担心如何自己清理它们。
+
+
+
+#表单控件绑定
+
+基础用法
+
+你可以用 v-model 指令在表单控件元素上创建双向数据绑定。它会根据控件类型自动选取正确的方法来更新元素。尽管有些神奇，但 v-model 本质上不过是语法糖，它负责监听用户的输入事件以更新数据，并特别处理一些极端的例子。
+v-model 并不关心表单控件初始化所生成的值。因为它会选择 Vue 实例数据来作为具体的值。
+
+对于要求 IME （如中文、 日语、 韩语等） 的语言，你会发现那v-model不会在 ime 构成中得到更新。如果你也想实现更新，请使用 input事件。
+ 双向bind
+<input v-model="message" placeholder="edit me">
+<p>Message is: {{ message }}</p>
+
+##多行文本
+
+<span>Multiline message is:</span>
+<p style="white-space: pre">{{ message }}</p>
+<br>
+<textarea v-model="message" placeholder="add multiple lines"></textarea>
+
+
+复选框
+
+单个勾选框，逻辑值：
+<input type="checkbox" id="checkbox" v-model="checked">
+<label for="checkbox">{{ checked }}</label>
+<script>
+new Vue({
+  el: '#example-2',
+  data: {
+    checked: false
+  }
+})
+</script>
+
+多个勾选框，绑定到同一个数组：
+<input type="checkbox" id="jack" value="Jack" v-model="checkedNames">
+<label for="jack">Jack</label>
+<input type="checkbox" id="john" value="John" v-model="checkedNames">
+<label for="john">John</label>
+<input type="checkbox" id="mike" value="Mike" v-model="checkedNames">
+<label for="mike">Mike</label>
+<br>
+<span>Checked names: {{ checkedNames }}</span>
+new Vue({
+  el: '...',
+  data: {
+    checkedNames: []
+  }
+})
+
+#单选按钮
+
+<div id="example-4" class="demo">
+  <input type="radio" id="one" value="One" v-model="picked">
+  <label for="one">One</label>
+  <br>
+  <input type="radio" id="two" value="Two" v-model="picked">
+  <label for="two">Two</label>
+  <br>
+  <span>Picked: {{ picked }}</span>
+</div>
+new Vue({
+  el: '#example-4',
+  data: {
+    picked: ''
+  }
+})
+
+选择列表
+
+单选列表:
+<div id="example-5" class="demo">
+  <select v-model="selected">
+    <option>A</option>
+    <option>B</option>
+    <option>C</option>
+  </select>
+  <span>Selected: {{ selected }}</span>
+</div>
+new Vue({
+  el: '#example-5',
+  data: {
+    selected: null
+  }
+})
+
+多选列表（绑定到一个数组）：
+<div id="example-6" class="demo">
+  <select v-model="selected" multiple style="width: 50px">
+    <option>A</option>
+    <option>B</option>
+    <option>C</option>
+  </select>
+  <br>
+  <span>Selected: {{ selected }}</span>
+</div>
+new Vue({
+  el: '#example-6',
+  data: {
+    selected: []
+  }
+})
+
+
+动态选项，用 v-for 渲染：
+<select v-model="selected">
+  <option v-for="option in options" v-bind:value="option.value">
+    {{ option.text }}
+  </option>
+</select>
+<span>Selected: {{ selected }}</span>
+new Vue({
+  el: '...',
+  data: {
+    selected: 'A',
+    options: [
+      { text: 'One', value: 'A' },
+      { text: 'Two', value: 'B' },
+      { text: 'Three', value: 'C' }
+    ]
+  }
+})
+
+
+绑定 value
+
+对于单选按钮，勾选框及选择列表选项， v-model 绑定的 value 通常是静态字符串（对于勾选框是逻辑值）：
+<!-- 当选中时，`picked` 为字符串 "a" -->
+<input type="radio" v-model="picked" value="a">
+<!-- `toggle` 为 true 或 false -->
+<input type="checkbox" v-model="toggle">
+<!-- 当选中时，`selected` 为字符串 "abc" -->
+<select v-model="selected">
+  <option value="abc">ABC</option>
+</select>
+
+
+!!但是有时我们想绑定 value 到 Vue 实例的一个动态属性上，这时可以用 v-bind 实现，并且这个属性的值可以不是字符串。
+复选框
+
+<input
+  type="checkbox"
+  v-model="toggle"
+  v-bind:true-value="a"
+  v-bind:false-value="b"
+>
+// 当选中时
+vm.toggle === vm.a
+// 当没有选中时
+vm.toggle === vm.b
+单选按钮
+
+<input type="radio" v-model="pick" v-bind:value="a">
+// 当选中时
+vm.pick === vm.a
+选择列表设置
+
+<select v-model="selected">
+    <!-- 内联对象字面量 -->
+  <option v-bind:value="{ number: 123 }">123</option>
+</select>
+// 当选中时
+typeof vm.selected // -> 'object'
+vm.selected.number // -> 123
+
+
+#.lazy
+
+在默认情况下， v-model 在 input 事件中同步输入框的值与数据 (除了 上述 IME 部分)，但你可以添加一个修饰符 lazy ，从而转变为在 change 事件中同步：
+<!-- 在 "change" 而不是 "input" 事件中更新 -->
+<input v-model.lazy="msg" >
+
+
+.number
+
+如果想自动将用户的输入值转为 Number 类型（如果原值的转换结果为 NaN 则返回原值），可以添加一个修饰符 number 给 v-model 来处理输入值：
+<input v-model.number="age" type="number">
+
+.trim
+
+如果要自动过滤用户输入的首尾空格，可以添加 trim 修饰符到 v-model 上过滤输入：
+<input v-model.trim="msg">
+
+v-model 与组件
+
+如果你还不熟悉Vue的组件，跳过这里即可。
+HTML 内建的 input 类型有时不能满足你的需求。还好，Vue 的组件系统允许你创建一个具有自定义行为可复用的 input 类型，这些 input 类型甚至可以和 v-model 一起使用！要了解更多，请参阅自定义 input 类型

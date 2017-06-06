@@ -1,0 +1,63 @@
+
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <title>Bootstrap 101 Template</title>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="/static/js/jquery.min.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
+
+    <!-- Bootstrap -->
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+
+    <script src="/static/js/vue.min.js"></script>
+<script>
+    $(function(){
+        var data = { counter: 0 }
+        Vue.component('simple-counter', {
+        template: '<button v-on:click="counter += 1">{{ counter }}</button>',
+        // 技术上 data 的确是一个函数了，因此 Vue 不会警告，
+        // 但是我们返回给每个组件的实例的却引用了同一个data对象
+        data: function () {
+            return data
+        }
+        })
+        new Vue({
+        el: '#example-2'
+        })
+    })
+</script>
+<div id="example-2">
+  <simple-counter></simple-counter>
+  <simple-counter></simple-counter>
+  <simple-counter></simple-counter>
+</div>
+
+
+
+<div id="example-3">
+  <simple-counter2></simple-counter2>
+  <simple-counter2></simple-counter2>
+  <simple-counter2></simple-counter2>
+</div>
+<script>
+
+    Vue.component('simple-counter2', {
+    template: '<button v-on:click="counter += 1">{{ counter }}</button>',
+    // 技术上 data 的确是一个函数了，因此 Vue 不会警告，
+    // 但是我们返回给每个组件的实例的却引用了同一个data对象
+    data: function () {
+        return { counter: 0 }
+    }
+    })
+    new Vue({
+    el: '#example-3'
+    })
+
+</script>
+
+
+
