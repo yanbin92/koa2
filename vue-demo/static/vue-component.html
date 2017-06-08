@@ -370,3 +370,32 @@ var vm = new Vue({
 })
 
 </script>
+
+
+
+<example id='update-queue' >
+
+
+</example>
+<script>
+Vue.component('example', {
+  template: '<span v-on:click="updateMessage">{{ message }}</span>',
+  data: function () {
+    return {
+      message: 'not updated'
+    }
+  },
+  methods: {
+    updateMessage: function () {
+      this.message = 'updated'
+      console.log(this.$el.textContent) // => '没有更新'
+      this.$nextTick(function () {
+        console.log(this.$el.textContent) // => '更新完成'
+      })
+    }
+  }
+})
+new Vue({
+    el:'#update-queue'
+})
+</script>
