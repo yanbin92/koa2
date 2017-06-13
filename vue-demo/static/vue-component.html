@@ -372,7 +372,7 @@ var vm = new Vue({
 </script>
 
 
-
+<h3> 异步更新队列 $nextTick(callback)</h3>
 <example id='update-queue' >
 
 
@@ -389,6 +389,7 @@ Vue.component('example', {
     updateMessage: function () {
       this.message = 'updated'
       console.log(this.$el.textContent) // => '没有更新'
+      //在dom更新完成时调用 
       this.$nextTick(function () {
         console.log(this.$el.textContent) // => '更新完成'
       })
@@ -397,5 +398,10 @@ Vue.component('example', {
 })
 new Vue({
     el:'#update-queue'
+
 })
+
+
 </script>
+
+
