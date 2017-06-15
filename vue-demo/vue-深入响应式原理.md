@@ -475,7 +475,6 @@ TODO 列表过渡之后的 过渡状态
   >
 </div>
 <script>
-
 new Vue({
   el: '#app',
   data: function () {
