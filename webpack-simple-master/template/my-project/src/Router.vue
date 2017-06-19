@@ -1,6 +1,12 @@
 <template>
   <div id="app">
-    <a href="index.html">home </a>
+    <p>
+    <router-link to="home">Go to Foo</router-link>
+    <router-link to="about">Go to Bar</router-link>
+    </p>
+    <!-- route outlet -->
+    <!-- component matched by the route will render here -->
+    <router-view></router-view>
   </div>
 </template>
 
@@ -9,7 +15,6 @@ export default {
   name: 'app',
   data () {
     return {
-      msg: 'Welcome to Your Vue.js App'
     }
   }
 }
