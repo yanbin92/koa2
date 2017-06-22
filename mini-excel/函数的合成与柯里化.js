@@ -77,6 +77,6 @@ class Functor {
 
 (new Functor('bombs')).map(_.concat(' away')).map(_.prop('length'));
 // Functor(10)
-
+http://www.ruanyifeng.com/blog/2017/02/fp-tutorial.html
 上面的例子说明，函数式编程里面的运算，都是通过函子完成，即运算不直接针对值，
 而是针对这个值的容器----函子。函子本身具有对外接口（map方法），各种函数就是运算符，通过接口接入容器，引发容器里面的值的变形。
