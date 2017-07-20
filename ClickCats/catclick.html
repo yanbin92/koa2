@@ -2,20 +2,19 @@
 <ol>
     <li>cat1</li>
     <li>cat2</li>
-    <li></li>
-    <li></li>
+    <li>cat3</li>
+    <li>cat4</li>
     <li>cat5</li>
-
 </ol>
 
 <div>
+    <p id='cat_name'></p>
     <img id='my-elem'>
-
     <p id='click_nums'></p>
 </div>
 <script>
 'use strict';
-var arrs=[{clicks:0},{clicks:0},{clicks:0},{clicks:0},{clicks:0},{clicks:0}]
+var arrs=[{name:'cat',clicks:0},{name:'cat',clicks:0},{clicks:0},{clicks:0},{clicks:0},{clicks:0}]
 
 var octopus={
     addClicks:function(position){
@@ -25,11 +24,13 @@ var octopus={
 
 var view={
     init:function(){
+        var cat_name=$('#cat_name');
         for(var i=0;i<=5;i++){
             $('ol li:nth-child('+i+')').click((function(icopy){
                 return function(){
-                    //摄图不会直接更改model
+                    //view不会直接更改model
                     console.log(icopy-1)
+                    cat_name.html(arrs[icopy].name);
                     $('#click_nums').html(arrs[icopy].clicks);
                     $('#my-elem').attr('src','cat'+icopy+'.jpg');
                     $('#my-elem').unbind('click').click(function(e) {
