@@ -16,23 +16,35 @@
 <script>
 'use strict';
 var arrs=[{clicks:0},{clicks:0},{clicks:0},{clicks:0},{clicks:0},{clicks:0}]
-for(var i=0;i<=5;i++){
-    $('ol li:nth-child('+i+')').click((function(icopy){
-        return function(){
-            console.log(icopy-1)
-             $('#click_nums').html(arrs[icopy].clicks);
-            $('#my-elem').attr('src','cat'+icopy+'.jpg')
-                    $('#my-elem').unbind('click').click(function(e) {
-                    //the element has been clicked... do stuff here
-                    var num= arrs[icopy].clicks;
-                    
-                    $('#click_nums').html(++num);
-                    arrs[icopy].clicks=num;
-                });
-        }
-    })(i))
-  
 
+var octopus={
+    addClicks:function(position){
+           ++arrs[position].clicks;
+    }
 }
+
+var view={
+    init:function(){
+        for(var i=0;i<=5;i++){
+            $('ol li:nth-child('+i+')').click((function(icopy){
+                return function(){
+                    //摄图不会直接更改model
+                    console.log(icopy-1)
+                    $('#click_nums').html(arrs[icopy].clicks);
+                    $('#my-elem').attr('src','cat'+icopy+'.jpg');
+                    $('#my-elem').unbind('click').click(function(e) {
+                        //the element has been clicked... do stuff here
+                    octopus.addClicks(icopy);
+                    $('#click_nums').html(arrs[icopy].clicks);
+            
+                    });
+                }
+            })(i))
+        
+        }
+    }
+}
+view.init();
+
 
 </script>
