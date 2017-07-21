@@ -1,10 +1,5 @@
 <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
 <ol>
-    <li>cat1</li>
-    <li>cat2</li>
-    <li>cat3</li>
-    <li>cat4</li>
-    <li>cat5</li>
 </ol>
 
 <div>
@@ -14,38 +9,77 @@
 </div>
 <script>
 'use strict';
-var arrs=[{name:'cat',clicks:0},{name:'cat',clicks:0},{clicks:0},{clicks:0},{clicks:0},{clicks:0}]
+var model={
+    currentCat:null
+    ,cats:[{},{name:'cat1',clicks:0,
+    src:'cat1.jpg'},{name:'cat2',clicks:0,
+    src:'cat2.jpg'},{name:'cat3',clicks:0,
+    src:'cat3.jpg'},{name:'cat4',clicks:0,
+    src:'cat4.jpg'},{name:'cat5',clicks:0,
+    src:'cat5.jpg'}]}
 
 var octopus={
-    addClicks:function(position){
-           ++arrs[position].clicks;
+    init:function(){
+    
+        viewforlist.init();
+        view.init();
+        model.currentCat=model.cats[1]
+        view.render(model.currentCat);
+ 
+    },
+    addClicks:function(){
+          model.currentCat.clicks++;
+          view.render(model.currentCat);
+    },
+    setCurrentCat:function(cat){
+        model.currentCat=cat;
+    },
+    getCats:function(){
+        return model.cats;
     }
 }
-
+var viewforlist={
+    init:function(){
+        var ol=$('ol');
+        for(var i=1;i<=5;i++){
+            var cat=octopus.getCats()[i];
+            ol.append('<li>'+cat.name+'</li>')
+        }
+    }
+}
 var view={
     init:function(){
-        var cat_name=$('#cat_name');
+        this.cat_name=$('#cat_name');
+        this.click_nums=$('#click_nums');
+        this.my_elem=$('#my-elem');
+        var that=this;
         for(var i=0;i<=5;i++){
             $('ol li:nth-child('+i+')').click((function(icopy){
                 return function(){
                     //view不会直接更改model
                     console.log(icopy-1)
-                    cat_name.html(arrs[icopy].name);
-                    $('#click_nums').html(arrs[icopy].clicks);
-                    $('#my-elem').attr('src','cat'+icopy+'.jpg');
-                    $('#my-elem').unbind('click').click(function(e) {
-                        //the element has been clicked... do stuff here
-                    octopus.addClicks(icopy);
-                    $('#click_nums').html(arrs[icopy].clicks);
-            
-                    });
+                    var cat=octopus.getCats()[icopy];
+
+                    octopus.setCurrentCat(cat);
+
+                    view.render(cat);
+
                 }
             })(i))
-        
         }
+        $('#my-elem').unbind('click').click(function(e) {
+                //the element has been clicked... do stuff here
+                octopus.addClicks();
+            });
+    },
+    render:function(cat){
+        this.cat_name.html(cat.name);
+        this.click_nums.html(cat.clicks);
+        this.my_elem.attr('src',cat.src);
     }
 }
-view.init();
+octopus.init();
+
 
 
 </script>
