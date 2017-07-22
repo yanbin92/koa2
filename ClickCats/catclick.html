@@ -1,85 +1,31 @@
-<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
-<ol>
-</ol>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cat Clicker</title>
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
 
-<div>
-    <p id='cat_name'></p>
-    <img id='my-elem'>
-    <p id='click_nums'></p>
-</div>
-<script>
-'use strict';
-var model={
-    currentCat:null
-    ,cats:[{},{name:'cat1',clicks:0,
-    src:'cat1.jpg'},{name:'cat2',clicks:0,
-    src:'cat2.jpg'},{name:'cat3',clicks:0,
-    src:'cat3.jpg'},{name:'cat4',clicks:0,
-    src:'cat4.jpg'},{name:'cat5',clicks:0,
-    src:'cat5.jpg'}]}
+</head>
+<body>
+    <ol>
+    </ol>
 
-var octopus={
-    init:function(){
-    
-        viewforlist.init();
-        view.init();
-        model.currentCat=model.cats[1]
-        view.render(model.currentCat);
- 
-    },
-    addClicks:function(){
-          model.currentCat.clicks++;
-          view.render(model.currentCat);
-    },
-    setCurrentCat:function(cat){
-        model.currentCat=cat;
-    },
-    getCats:function(){
-        return model.cats;
-    }
-}
-var viewforlist={
-    init:function(){
-        var ol=$('ol');
-        for(var i=1;i<=5;i++){
-            var cat=octopus.getCats()[i];
-            ol.append('<li>'+cat.name+'</li>')
-        }
-    }
-}
-var view={
-    init:function(){
-        this.cat_name=$('#cat_name');
-        this.click_nums=$('#click_nums');
-        this.my_elem=$('#my-elem');
-        var that=this;
-        for(var i=0;i<=5;i++){
-            $('ol li:nth-child('+i+')').click((function(icopy){
-                return function(){
-                    //view不会直接更改model
-                    console.log(icopy-1)
-                    var cat=octopus.getCats()[icopy];
+    <div>
+        <p id='cat_name'></p>
+        <img id='my-elem'>
+        <p id='click_nums'></p>
+    </div>
 
-                    octopus.setCurrentCat(cat);
+    <button id="bt_admin">Admin</button>
 
-                    view.render(cat);
+    <div id="admin_area">
+        <label>catName</label><input type="text" id="input_cat_name"/>
+        <label>imageUrl</label><input type="text" id="input_imageurl"/>
+        <label>clicks</label><input type="number" id="input_clicks"/>
+        <button id="bt_cancel" > cancel</button>
+        <button  id="bt_save">save</button>
+    </div>
+    <script src="js/cat.js"></script>
 
-                }
-            })(i))
-        }
-        $('#my-elem').unbind('click').click(function(e) {
-                //the element has been clicked... do stuff here
-                octopus.addClicks();
-            });
-    },
-    render:function(cat){
-        this.cat_name.html(cat.name);
-        this.click_nums.html(cat.clicks);
-        this.my_elem.attr('src',cat.src);
-    }
-}
-octopus.init();
-
-
-
-</script>
+</body>
+</html>
