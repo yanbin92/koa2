@@ -1,7 +1,10 @@
 //Grunt is a command line tool — I’m just a designer
 //Remember Grunt is a task runner.
+
+
 module.exports = function(grunt) {
 
+    require('load-grunt-tasks')(grunt);
   // Project configuration.
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
@@ -105,8 +108,30 @@ module.exports = function(grunt) {
                 src: ['raster/**.{jpg,gif,png,svg,pdf}'],
                 dest: 'path/to/output'
             }]
+        }
+    },
+    pagespeed: {
+        options: {
+            nokey: true,
+            url: "https://developers.google.com"
+        },
+        prod: {
+            options: {
+            url: "https://developers.google.com/speed/docs/insights/v1/getting_started",
+            locale: "en_GB",
+            strategy: "desktop",
+            threshold: 80
+            }
+        },
+        paths: {
+            options: {
+            paths: ["/speed/docs/insights/v1/getting_started", "/speed/docs/about"],
+            locale: "en_GB",
+            strategy: "desktop",
+            threshold: 80
+            }
+        }
     }
-}
 
   });
     grunt.loadNpmTasks('grunt-contrib-concat');
@@ -117,6 +142,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-sass');
     grunt.loadNpmTasks('grunt-responsive-images');
+    grunt.loadNpmTasks('grunt-pagespeed');
 
     /**
      * watch 必须放在最后

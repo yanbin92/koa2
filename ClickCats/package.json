@@ -17,7 +17,9 @@
     "grunt-contrib-sass": "^1.0.0",
     "grunt-contrib-uglify": "3.0.1",
     "grunt-contrib-watch": "^1.0.0",
-    "grunt-responsive-images": "1.10.1"
+    "grunt-pagespeed": "^2.0.1",
+    "grunt-responsive-images": "1.10.1",
+    "load-grunt-tasks": "^3.5.2"
   },
   "dependencies": {
     "imagemagick": "^0.1.3"
