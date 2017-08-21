@@ -16,6 +16,10 @@
     "grunt-contrib-nodeunit": "1.0.0",
     "grunt-contrib-sass": "^1.0.0",
     "grunt-contrib-uglify": "3.0.1",
-    "grunt-contrib-watch": "^1.0.0"
+    "grunt-contrib-watch": "^1.0.0",
+    "grunt-responsive-images": "1.10.1"
+  },
+  "dependencies": {
+    "imagemagick": "^0.1.3"
   }
 }

@@ -25,7 +25,7 @@ module.exports = function(grunt) {
             files: [{
                 expand: true,
                 cwd: 'images/',
-                src: ['**/*.{png,jpg,gif}'],
+                src: ['*.{png,jpg,gif}'],
                 dest: 'images/build/'
             }]
         }
@@ -48,7 +48,14 @@ module.exports = function(grunt) {
             options: {
                 spawn: false,
             }
-        } 
+        },
+     
+        images: {
+            expand: true,
+            files: 'images/build/*.{jpg,gif,png}',
+            tasks: 'responsive_images'
+      }
+
     },
     sass: {
         dist: {
@@ -59,7 +66,47 @@ module.exports = function(grunt) {
                 'css/build/global.css': 'css/*.scss'
             }
         } 
-    }   
+    },
+     responsive_images: {
+        dev: {
+            options: {
+                sizes: [{
+                            name: 'small',
+                            width: 320,
+                            height: 240
+                        },{
+                            name: 'medium',
+                            width: 640
+                        },{
+                            name: "large",
+                            width: 1024,
+                            separator: "-",
+                            suffix: "_x2",
+                            quality: 60
+                        }]
+            },
+            files: [{
+                expand: true,
+                cwd: 'images/build',
+                src: ['*.{gif,jpg,png}'],
+                dest: 'dist/'
+                }]
+
+        }
+    },
+    respimg: {
+        nooptim: {
+            options: {
+                optimize: false
+            },
+            files: [{
+                expand: true,
+                cwd: 'path/to/input',
+                src: ['raster/**.{jpg,gif,png,svg,pdf}'],
+                dest: 'path/to/output'
+            }]
+    }
+}
 
   });
     grunt.loadNpmTasks('grunt-contrib-concat');
@@ -69,6 +116,13 @@ module.exports = function(grunt) {
 
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-sass');
-    grunt.registerTask('default', ['concat','uglify','imagemin','watch','sass']);
+    grunt.loadNpmTasks('grunt-responsive-images');
+
+    /**
+     * watch 必须放在最后
+     */
+    grunt.registerTask('default', ['concat','uglify',
+    'imagemin','sass','responsive_images','watch'
+    ]);
 
 };
