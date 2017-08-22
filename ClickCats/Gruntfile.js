@@ -96,20 +96,21 @@ module.exports = function(grunt) {
                 }]
 
         }
-    },
-    respimg: {
-        nooptim: {
-            options: {
-                optimize: false
-            },
-            files: [{
-                expand: true,
-                cwd: 'path/to/input',
-                src: ['raster/**.{jpg,gif,png,svg,pdf}'],
-                dest: 'path/to/output'
-            }]
-        }
-    },
+    }
+    ,
+    // respimg: {
+    //     nooptim: {
+    //         options: {
+    //             optimize: false
+    //         },
+    //         files: [{
+    //             expand: true,
+    //             cwd: 'path/to/input',
+    //             src: ['raster/**.{jpg,gif,png,svg,pdf}'],
+    //             dest: 'path/to/output'
+    //         }]
+    //     }
+    // },
     pagespeed: {
         options: {
             nokey: true,
