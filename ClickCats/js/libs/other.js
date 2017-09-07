@@ -299,10 +299,13 @@ var Van=function(loc){
 
     //return this;
 }
-//这样写官方不对  这样Van和 Car都使用同一个prototype 一个修改另一个也修改
-//Van.prototype=Car.prototype;
+//Van.prototype=Car.prototype; 这样写不对  这样Van和 Car都使用同一个prototype 一个修改另一个也修改
+//官方实现
 Van.prototype=Object.create(Car.prototype)
 Van.prototype.constructor=Van
+Van.prototype.grad=function(){
+    /**.... */
+}
 
 var product=function(num,b){
     return num*b;
