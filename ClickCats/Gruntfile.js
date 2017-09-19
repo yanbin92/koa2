@@ -4,7 +4,6 @@
 
 module.exports = function(grunt) {
 
-    require('load-grunt-tasks')(grunt);
   // Project configuration.
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
@@ -73,6 +72,7 @@ module.exports = function(grunt) {
      responsive_images: {
         dev: {
             options: {
+                engine:'im',
                 sizes: [{
                             name: 'small',
                             width: 320,
@@ -149,7 +149,7 @@ module.exports = function(grunt) {
      * watch 必须放在最后
      */
     grunt.registerTask('default', ['concat','uglify',
-    'imagemin','sass','responsive_images','watch'
+    'imagemin','sass','responsive_images','pagespeed','watch'
     ]);
 
 };
